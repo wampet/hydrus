@@ -17,12 +17,23 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   AuthenticationBloc({required AuthenticationRepository authenticationRepository})
       : _authenticationRepository = authenticationRepository,
         super(UnknownAuth(user: User.empty)) {
+    on<AuthenticationEvent>(_onAuthenticationEvent);
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
-      (status) => add(AuthenticationStatusChanged(status)),
+      (status) => add(
+        AuthenticationStatusChanged(status),
+      ),
     );
   }
 
-  @override
+  Future<void> _onAuthenticationEvent(AuthenticationEvent event, Emitter<AuthenticationState> emit) async {
+    if (event is AuthenticationStatusChanged) {
+      emit(await _mapAuthenticationStatusChangedToState(event));
+    } else if (event is AuthenticationLogoutRequested) {
+      _authenticationRepository.logOut();
+    }
+  }
+
+  /*  @override
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
@@ -31,7 +42,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     } else if (event is AuthenticationLogoutRequested) {
       _authenticationRepository.logOut();
     }
-  }
+  } */
 
   @override
   Future<void> close() {

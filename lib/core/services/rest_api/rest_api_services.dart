@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:deep_pick/deep_pick.dart';
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
@@ -10,8 +11,7 @@ import '../../../config/authentication/controllers/auth_controller.dart';
 
 /// contains all service to get data from Server
 class RestApiServices {
-  String apiBaseUrl =
-      'http://sandbox666353.westeurope.cloudapp.azure.com:8087/api/v4/';
+  String apiBaseUrl = 'http://sandbox666353.westeurope.cloudapp.azure.com:8087/api/v4/';
   AuthenticationRepository? authenticationRepository;
   AuthController authCtrlr = Get.find();
 
@@ -36,9 +36,10 @@ class RestApiServices {
   ResponseModel responseHandler(http.Response response) {
     ResponseModel responseModel = ResponseModel();
     var jsonRes = json.decode(response.body);
+    print(jsonRes);
     responseModel = ResponseModel(
       message: jsonRes['message'] ?? '',
-      status: jsonRes['status'] ?? false,
+      status: pick(jsonRes['status']).asBoolOrNull() ?? false,
       statusCode: jsonRes['status_code'] ?? 0,
     );
 
@@ -52,11 +53,8 @@ class RestApiServices {
           if (responseModel.message == "Account is not yet verified.") {
             authenticationRepository?.onboardingReqAcctVerification();
             // } else if (responseModel.message == "Invalid credentials") {
-          } else if (responseModel.message == "Expired Session" ||
-              responseModel.message == "Token has expired" ||
-              responseModel.message == "Invalid Token") {
-            Snackbar.infoSnackBar(
-                responseModel.message ?? RestApiServices.errMessage);
+          } else if (responseModel.message == "Expired Session" || responseModel.message == "Token has expired" || responseModel.message == "Invalid Token") {
+            Snackbar.infoSnackBar(responseModel.message ?? RestApiServices.errMessage);
             authCtrlr.logout();
           }
           break;
@@ -78,10 +76,7 @@ class RestApiServices {
     }
   }
 
-  Future<ResponseModel> makePost(
-      {required String url,
-      Map<String, String>? data,
-      String? defaultMessage}) async {
+  Future<ResponseModel> makePost({required String url, Map<String, String>? data, String? defaultMessage}) async {
     try {
       return await post(url, data);
     } on Exception catch (_) {
@@ -93,24 +88,19 @@ class RestApiServices {
     var headers = requestHeader();
     var uri = Uri.parse('$apiBaseUrl$url');
     print(uri);
-    var response =
-        await http.post(uri, body: jsonEncode(data), headers: headers);
+    var response = await http.post(uri, body: jsonEncode(data), headers: headers);
     // log(response.body);
     // log(jsonEncode(data));
     return responseHandler(response);
   }
 
-  Future<ResponseModel> makeGet(
-      {Map<String, dynamic>? data,
-      required String url,
-      String? defaultMessage}) async {
+  Future<ResponseModel> makeGet({Map<String, dynamic>? data, required String url, String? defaultMessage}) async {
     try {
       var uri = Uri.parse('$apiBaseUrl$url/');
       var response = await http.get(uri);
       return responseHandler(response);
     } on Exception catch (_) {
-      return ResponseModel(
-          message: defaultMessage != "" ? defaultMessage : errMessage);
+      return ResponseModel(message: defaultMessage != "" ? defaultMessage : errMessage);
     }
   }
 
