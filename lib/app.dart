@@ -27,10 +27,11 @@ class hydrus extends StatelessWidget {
 
     // add Blocs
     return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: authenticationRepository),
+      ],
+      child: MultiBlocProvider(
         providers: [
-          RepositoryProvider.value(value: authenticationRepository),
-        ],
-        child: MultiBlocProvider(providers: [
           BlocProvider(
             create: (_) => AuthenticationBloc(
               authenticationRepository: authenticationRepository,
@@ -41,14 +42,12 @@ class hydrus extends StatelessWidget {
           // }),
           BlocProvider(create: (context) {
             return LoginBloc(
-              authenticationRepository:
-                  RepositoryProvider.of<AuthenticationRepository>(context),
+              authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
             );
           }),
           BlocProvider(create: (context) {
             return SignUpBloc(
-              authenticationRepository:
-                  RepositoryProvider.of<AuthenticationRepository>(context),
+              authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
             );
           }),
           // BlocProvider(create: (context) {
@@ -63,7 +62,10 @@ class hydrus extends StatelessWidget {
           // BlocProvider(create: (context) {
           //   return ConfirmForgotPasswordCubit();
           // })
-        ], child: AppView()));
+        ],
+        child: AppView(),
+      ),
+    );
   }
 }
 

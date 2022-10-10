@@ -18,6 +18,6 @@ class OpenAnAccountController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    // emailController.dispose();
+    //emailController.dispose();
   }
 }

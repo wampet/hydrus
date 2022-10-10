@@ -59,6 +59,7 @@ dependencies:
   formz: ^0.4.1
   equatable: ^2.0.5
   flutter_bloc: ^8.1.1
+  deep_pick: ^0.10.0
 dev_dependencies: 
   flutter_test: 
     sdk: flutter

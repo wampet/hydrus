@@ -17,11 +17,24 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
     required AuthenticationRepository authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
-        super(const LoginState());
+        super(const LoginState()) {
+    on<LoginEvent>(_onLoginEvent);
+  }
 
   final AuthenticationRepository _authenticationRepository;
 
-  @override
+  Future<void> _onLoginEvent(LoginEvent event, Emitter<LoginState> emit) async {
+    if (event is LoginEmailChanged) {
+      emit(_mapEmailChangedToState(event, state));
+    } else if (event is LoginPasswordChanged) {
+      emit(_mapPasswordChangedToState(event, state));
+    } else if (event is LoginSubmitted) {
+      print("=================");
+      await _mapLoginSubmittedToState(event, state, emit);
+    }
+  }
+
+  /* @override
   Stream<LoginState> mapEventToState(
     LoginEvent event,
   ) async* {
@@ -32,7 +45,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else if (event is LoginSubmitted) {
       yield* _mapLoginSubmittedToState(event, state);
     }
-  }
+  } */
 
   LoginState _mapEmailChangedToState(
     LoginEmailChanged event,
@@ -56,40 +69,36 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
   }
 
-  Stream<LoginState> _mapLoginSubmittedToState(
-    LoginSubmitted event,
-    LoginState state,
-  ) async* {
+  Future _mapLoginSubmittedToState(LoginSubmitted event, LoginState state, Emitter<LoginState> emit) async {
+    print("They called me");
     if (state.status.isValidated) {
-      yield state.copyWith(
+      emit(state.copyWith(
         status: FormzStatus.submissionInProgress,
         email: Email.dirty(state.email.value),
         password: Password.dirty(state.password.value),
-      );
+      ));
       try {
         var api = UserApi.withAuthRepository(_authenticationRepository);
         ResponseModel loginRes = await api.login({
           'email': state.email.value,
           'password': state.password.value,
         });
+        print("***************************${loginRes.toMap()}***************************");
         if (loginRes.status == true) {
           await onAuthenticated(loginRes, _authenticationRepository);
 
-          yield state.copyWith(
+          emit(state.copyWith(
             status: FormzStatus.submissionSuccess,
-          );
+          ));
         } else {
-          Snackbar.errSnackBar(
-              'Login Failed', loginRes.message ?? RestApiServices.errMessage);
+          Snackbar.errSnackBar('Login Failed', loginRes.message ?? RestApiServices.errMessage);
 
-          yield state.copyWith(
-              status: FormzStatus.submissionFailure, message: loginRes.message);
+          emit(state.copyWith(status: FormzStatus.submissionFailure, message: loginRes.message));
         }
       } on Exception catch (_) {
         Snackbar.errSnackBar('Login Failed', RestApiServices.errMessage);
 
-        yield state.copyWith(
-            status: FormzStatus.submissionFailure, message: UserApi.errMessage);
+        emit(state.copyWith(status: FormzStatus.submissionFailure, message: UserApi.errMessage));
       }
     }
   }

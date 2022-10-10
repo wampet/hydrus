@@ -15,11 +15,41 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   SignUpBloc({
     required AuthenticationRepository authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
-        super(const SignUpState());
+        super(const SignUpState()) {
+    on<SignUpEvent>(_onSignUpEvent);
+  }
 
   final AuthenticationRepository _authenticationRepository;
 
-  @override
+  Future<void> _onSignUpEvent(SignUpEvent event, Emitter<SignUpState> emit) async {
+    if (event is SignUpBusinessNameChanged) {
+      emit(_mapBusinessNameChangedToState(event, state));
+    } else if (event is SignUpWebsiteChanged) {
+      emit(_mapWebsiteChangedToState(event, state));
+    } else if (event is SignUpCurrencyCodeChanged) {
+      emit(_mapCurrencyCodeChangedToState(event, state));
+    } else if (event is SignUpCountryCodeChanged) {
+      emit(_mapCountryCodeChangedToState(event, state));
+    } else if (event is SignUpIpnUriChanged) {
+      emit(_mapIpnUriChangedToState(event, state));
+    } else if (event is SignUpFirstNameChanged) {
+      emit(_mapFirstNameChangedToState(event, state));
+    } else if (event is SignUpLastNameChanged) {
+      emit(_mapLastNameChangedToState(event, state));
+    } else if (event is SignUpEmailAddressChanged) {
+      emit(_mapEmailAddressChangedToState(event, state));
+    } else if (event is SignUpPhoneNumberChanged) {
+      emit(_mapPhoneNumberChangedToState(event, state));
+    } else if (event is SignUpPasswordChanged) {
+      emit(_mapPasswordChangedToState(event, state));
+    } else if (event is SignUpConfirmPasswordChanged) {
+      emit(_mapConfirmPasswordChangedToState(event, state));
+    } else if (event is SignUpSubmitted) {
+      await _mapSignUpSubmittedToState(event, state, emit);
+    }
+  }
+
+  /* @override
   Stream<SignUpState> mapEventToState(
     SignUpEvent event,
   ) async* {
@@ -46,7 +76,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     } else if (event is SignUpConfirmPasswordChanged) {
       yield _mapConfirmPasswordChangedToState(event, state);
     }
-  }
+  } */
 
   SignUpState _mapBusinessNameChangedToState(
     SignUpBusinessNameChanged event,
@@ -154,13 +184,10 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     );
   }
 
-  Stream<SignUpState> _mapSignUpSubmittedToState(
-    SignUpSubmitted event,
-    SignUpState state,
-  ) async* {
+  Future _mapSignUpSubmittedToState(SignUpSubmitted event, SignUpState state, Emitter<SignUpState> emit) async {
     bool canSubmit = Formz.validate(allStateInputs(state)) == FormzStatus.valid;
     if (canSubmit) {
-      yield state.copyWith(status: FormzStatus.submissionInProgress);
+      emit(state.copyWith(status: FormzStatus.submissionInProgress));
 
       try {
         var api = UserApi.withAuthRepository(_authenticationRepository);
@@ -178,20 +205,19 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
           'confirmPassword': state.confirmPassword.value,
         });
         if (signUpRes.status == true) {
-          yield state.copyWith(
+          emit(state.copyWith(
             status: FormzStatus.submissionSuccess,
-          );
+          ));
 
           await onAuthenticated(signUpRes, _authenticationRepository);
         } else {
-          Snackbar.errSnackBar('Sign Up Failed',
-              signUpRes.message ?? RestApiServices.errMessage);
+          Snackbar.errSnackBar('Sign Up Failed', signUpRes.message ?? RestApiServices.errMessage);
 
-          yield state.copyWith(status: FormzStatus.submissionFailure);
+          emit(state.copyWith(status: FormzStatus.submissionFailure));
         }
         // yield state.copyWith(status: FormzStatus.submissionSuccess);
       } on Exception catch (_) {
-        yield state.copyWith(status: FormzStatus.submissionFailure);
+        emit(state.copyWith(status: FormzStatus.submissionFailure));
       }
     } else {
       Snackbar.errSnackBar('Missing Fields', "fill the registration form");

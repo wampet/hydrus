@@ -79,7 +79,7 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
                     children: [
                       CustomFormField(
                         title: 'Enter your email',
-                        // controller: openAnAccountController.emailController,
+                        //controller: openAnAccountController.emailController,
                         validateFunction: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please fill out this field';
@@ -151,9 +151,9 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
                                 setState(() => showErrorMessage = true);
                               } else {
                                 setState(() => showErrorMessage = false);
-                                // openAnAccountController.verifyEmail(
-                                //     openAnAccountController
-                                //         .emailController.text);
+                                 /* openAnAccountController.verifyEmail(
+                                     openAnAccountController
+                                         .emailController.text); */
                                 _formKey.currentState!.save();
                               }
                               Get.toNamed(AppRoutes.verifyEmailScreen);

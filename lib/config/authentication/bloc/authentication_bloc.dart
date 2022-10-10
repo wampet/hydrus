@@ -10,22 +10,30 @@ import 'package:hydrus/config/authentication/controllers/auth_controller.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthenticationRepository _authenticationRepository;
-  late StreamSubscription<AuthenticationStatus>
-      _authenticationStatusSubscription;
+  late StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
 
-  AuthenticationBloc({
-    required AuthenticationRepository authenticationRepository,
-  })  : _authenticationRepository = authenticationRepository,
+  AuthenticationBloc({required AuthenticationRepository authenticationRepository})
+      : _authenticationRepository = authenticationRepository,
         super(UnknownAuth(user: User.empty)) {
+    on<AuthenticationEvent>(_onAuthenticationEvent);
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
-      (status) => add(AuthenticationStatusChanged(status)),
+      (status) => add(
+        AuthenticationStatusChanged(status),
+      ),
     );
   }
 
-  @override
+  Future<void> _onAuthenticationEvent(AuthenticationEvent event, Emitter<AuthenticationState> emit) async {
+    if (event is AuthenticationStatusChanged) {
+      emit(await _mapAuthenticationStatusChangedToState(event));
+    } else if (event is AuthenticationLogoutRequested) {
+      _authenticationRepository.logOut();
+    }
+  }
+
+  /*  @override
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
@@ -34,7 +42,7 @@ class AuthenticationBloc
     } else if (event is AuthenticationLogoutRequested) {
       _authenticationRepository.logOut();
     }
-  }
+  } */
 
   @override
   Future<void> close() {
