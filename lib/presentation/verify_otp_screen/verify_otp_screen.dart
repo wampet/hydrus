@@ -1,30 +1,30 @@
 // ignore_for_file: unused_field, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:hydrus/core/api/api.dart';
+import 'package:hydrus/core/widgets/navigationService.dart';
+import 'package:hydrus/presentation/verify_otp_screen/models/verify_otp_model.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:hydrus/core/app_export.dart';
 import 'package:hydrus/core/utils/regex.dart';
-import 'package:hydrus/presentation/open_an_account_screen/controller/open_an_account_controller.dart';
-import 'package:hydrus/presentation/verify_email_screen/controller/verify_email_screen_controller.dart';
 
 // Create a Form widget.
-class VerifyEmailScreen extends StatefulWidget {
-  const VerifyEmailScreen({Key? key}) : super(key: key);
+class VerifyOTPScreen extends StatefulWidget {
+  const VerifyOTPScreen({
+    Key? key,
+    required this.email,
+  }) : super(key: key);
+  final String email;
 
   @override
-  VerifyEmailScreenState createState() {
-    return VerifyEmailScreenState();
+  VerifyOTPScreenState createState() {
+    return VerifyOTPScreenState();
   }
 }
 
-class VerifyEmailScreenState extends State<VerifyEmailScreen> {
-  final VerifyEmailController verifyEmailController =
-      Get.put(VerifyEmailController());
-
-  var emailInstance = OpenAnAccountController();
-
+class VerifyOTPScreenState extends State<VerifyOTPScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  TextEditingController otpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -43,13 +43,9 @@ class VerifyEmailScreenState extends State<VerifyEmailScreen> {
           backgroundColor: Colors.white),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.symmetric(
-              horizontal: getHorizontalSize(20),
-              vertical: getVerticalSize(100)),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(25))),
-          padding: EdgeInsets.symmetric(
-              horizontal: getHorizontalSize(20), vertical: getVerticalSize(20)),
+          margin: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(100)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(25))),
+          padding: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(20)),
           child: Align(
             alignment: Alignment.center,
             child: Column(
@@ -76,11 +72,11 @@ class VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   child: Column(
                     children: [
                       PinCodeTextField(
-                        length: 4,
+                        length: 6,
                         // mainAxisAlignment: MainAxisAlignment.spaceAround,
                         textStyle: kBRegularStyle,
                         obscureText: false,
-                        controller: verifyEmailController.emailPassController,
+                        controller: otpController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please fill out this field';
@@ -110,10 +106,14 @@ class VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           function: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
-                              // verifyEmailController.verifyOtp(
-                              //     emailInstance.emailController.text,
-                              //     verifyEmailController
-                              //         .emailPassController.text);
+                              /* snackBar("Verifying...");
+                              verifyOTP(emailAddress: widget.email, otpCode: otpController.text).then((value) {
+                                var verifyOTPModel = VerifyOtpModel.fromJson(value ?? {});
+                                snackBar(verifyOTPModel.status!);
+                                if (verifyOTPModel.status == "success") {
+                                  Get.toNamed(AppRoutes.aboutYouScreen);
+                                }
+                              }); */
                               Get.toNamed(AppRoutes.aboutYouScreen);
                             }
                           }),

@@ -2,10 +2,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../app_export.dart';
 ///////////////////////////////////////////////////////
-
+const baseUrl = 'http://sandbox666353.westeurope.cloudapp.azure.com:5000/api';
+final db = Hive.box('app');
 const kBorderRadius = 20.0;
 const kSpacing = 20.0;
 const lockAppIn = 6000; // millisecs to lock the app

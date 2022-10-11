@@ -2,9 +2,12 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:hydrus/core/api/api.dart';
 import 'package:hydrus/core/app_export.dart';
 import 'package:hydrus/core/utils/regex.dart';
-import 'package:hydrus/presentation/open_an_account_screen/controller/open_an_account_controller.dart';
+import 'package:hydrus/core/widgets/navigationService.dart';
+import 'package:hydrus/presentation/open_an_account_screen/models/open_an_account_model.dart';
+import 'package:hydrus/presentation/verify_otp_screen/verify_otp_screen.dart';
 
 // Create a Form widget.
 class OpenAnAccountScreen extends StatefulWidget {
@@ -15,13 +18,13 @@ class OpenAnAccountScreen extends StatefulWidget {
 }
 
 class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
-  final OpenAnAccountController openAnAccountController =
-      Get.put(OpenAnAccountController());
   final _formKey = GlobalKey<FormState>();
   bool agree = false;
 
 // this bool will check rememberMe is checked
   bool showErrorMessage = false;
+
+  TextEditingController emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -40,9 +43,7 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
           backgroundColor: Colors.white),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.symmetric(
-              horizontal: getHorizontalSize(20),
-              vertical: getVerticalSize(100)),
+          margin: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(100)),
           child: Align(
             alignment: Alignment.center,
             child: Column(
@@ -79,7 +80,7 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
                     children: [
                       CustomFormField(
                         title: 'Enter your email',
-                        // controller: openAnAccountController.emailController,
+                        controller: emailController,
                         validateFunction: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please fill out this field';
@@ -95,9 +96,7 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
                           Checkbox(
                             checkColor: Colors.white,
                             activeColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0))),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
                             value: agree,
                             onChanged: (value) {
                               setState(() {
@@ -108,14 +107,11 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
                           Expanded(
                             child: RichText(
                               text: TextSpan(children: [
-                                TextSpan(
-                                    text: 'I have read and agree with the ',
-                                    style: AppStyle.textstyleregular13),
+                                TextSpan(text: 'I have read and agree with the ', style: AppStyle.textstyleregular13),
                                 TextSpan(
                                   text: 'Terms and Conditions of use',
                                   style: AppStyle.textstyleregorange13,
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () => print('Tap Here onTap'),
+                                  recognizer: TapGestureRecognizer()..onTap = () => print('Tap Here onTap'),
                                 )
                               ]),
                             ),
@@ -134,13 +130,8 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
                           //         'Please accept the terms and conditions to proceed')
 
                           Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(80.0)),
-                              child: Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                      'Please accept the terms and conditions to proceed...')))
+                              decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(80.0)),
+                              child: Padding(padding: EdgeInsets.all(10.0), child: Text('Please accept the terms and conditions to proceed...')))
                           : Container(),
                       SendButton(
                           buttonTitle: 'Proceed',
@@ -151,12 +142,23 @@ class _OpenAnAccountScreenState extends State<OpenAnAccountScreen> {
                                 setState(() => showErrorMessage = true);
                               } else {
                                 setState(() => showErrorMessage = false);
-                                // openAnAccountController.verifyEmail(
-                                //     openAnAccountController
-                                //         .emailController.text);
                                 _formKey.currentState!.save();
+                                snackBar("Please wait...");
+                                verifyEmail(emailAddress: emailController.text).then((value) {
+                                  var verifyEmailModel = AuthModel.fromJson(value ?? {});
+                                  snackBar(verifyEmailModel.message!);
+                                  if (verifyEmailModel.status == "success") {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => VerifyOTPScreen(
+                                          email: emailController.text,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                });
                               }
-                              Get.toNamed(AppRoutes.verifyEmailScreen);
                             }
                           }),
                     ],

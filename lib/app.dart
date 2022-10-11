@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrus/config/authentication/authentication.dart';
 import 'package:hydrus/config/authentication/controllers/auth_controller.dart';
 import 'package:hydrus/core/app_export.dart';
+import 'package:hydrus/core/widgets/navigationService.dart';
 import 'package:hydrus/presentation/sign_up/sign_up.dart';
 
 import 'presentation/login_screen/bloc/login_bloc.dart';
@@ -73,7 +74,7 @@ class AppView extends StatefulWidget {
 }
 
 class _AppViewState extends State<AppView> with WidgetsBindingObserver {
-  final _navigatorKey = GlobalKey<NavigatorState>();
+  final _navigatorKey = NavigationService.instance.navigationKey;
   AuthController authController = Get.find();
   List<AppLifecycleState> stateArr = [];
   @override

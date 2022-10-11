@@ -37,13 +37,9 @@ class PasswordScreenState extends State<PasswordScreen> {
           backgroundColor: Colors.white),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.symmetric(
-              horizontal: getHorizontalSize(20),
-              vertical: getVerticalSize(100)),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(25))),
-          padding: EdgeInsets.symmetric(
-              horizontal: getHorizontalSize(20), vertical: getVerticalSize(20)),
+          margin: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(100)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(25))),
+          padding: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(20)),
           child: Align(
             alignment: Alignment.center,
             child: Column(
@@ -72,17 +68,18 @@ class PasswordScreenState extends State<PasswordScreen> {
                       SizedBox(
                         // height: getVerticalSize(60),
                         child: PasswordValidatedFields(
-                            // textStyle: AppStyle.textstyleregularform16,
-                            cursorColor: ColorConstant.black900,
-                            inputDecoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: getHorizontalSize(20),
-                                    vertical: getVerticalSize(0)),
-                                hintText: 'Create a password',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
-                                )))),
+                          // textStyle: AppStyle.textstyleregularform16,
+                          cursorColor: ColorConstant.black900,
+                          inputDecoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(0)),
+                            hintText: 'Create a password',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                       SizedBox(
                         height: getVerticalSize(20),
@@ -94,6 +91,7 @@ class PasswordScreenState extends State<PasswordScreen> {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
                               Get.toNamed(AppRoutes.companyDetailsScreen);
+                              
                             }
                           }),
                     ],
