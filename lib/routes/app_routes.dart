@@ -18,7 +18,6 @@ import 'package:get/get.dart';
 import 'package:hydrus/presentation/home_screen/binding/home_binding.dart';
 import 'package:hydrus/presentation/home_screen/home_screen.dart';
 import 'package:hydrus/presentation/manage_people_screen/manage_people_screen.dart';
-import 'package:hydrus/presentation/open_an_account_screen/binding/open_an_account_binding.dart';
 import 'package:hydrus/presentation/open_an_account_screen/open_an_account_screen.dart';
 import 'package:hydrus/presentation/setup_company_screen/binding/setup_company_binding.dart';
 import 'package:hydrus/presentation/setup_company_screen/set_up_company_screen.dart';
@@ -26,8 +25,6 @@ import 'package:hydrus/presentation/splash_screen/binding/splash_screen_binding.
 import 'package:hydrus/presentation/splash_screen/splash_screen.dart';
 import 'package:hydrus/presentation/transactions_screen/binding/transactions_binding.dart';
 import 'package:hydrus/presentation/transactions_screen/transactions_screen.dart';
-import 'package:hydrus/presentation/verify_email_screen/binding/verify_email_screen_binding.dart';
-import 'package:hydrus/presentation/verify_email_screen/verify_email_screen.dart';
 
 class AppRoutes {
   static String initialRoute = '/initialRoute';
@@ -52,18 +49,14 @@ class AppRoutes {
   static String sendInternetRecipientScreen = '/send_internet_recipient_screen';
   static String sendAirtimeRecipientScreen = '/send_airtime_recipient_screen';
   static String sendBankRecipientScreen = '/send_bank_recipient_screen';
-  static String sendMobileMoneyRecipientScreen =
-      '/send_mobile_money_recipient_screen';
+  static String sendMobileMoneyRecipientScreen = '/send_mobile_money_recipient_screen';
   static String payPeopleOptionsScreen = '/pay_people_options_screen';
   static String payPeopleBanksScreen = '/pay_People_banks_screen';
-  static String payPeopleBankTransferScreen =
-      '/pay_People_bank_transfer_screen';
+  static String payPeopleBankTransferScreen = '/pay_People_bank_transfer_screen';
   static String payPeopleMobileMoneyScreen = '/pay_people_mobile_money_screen';
 
-  static String payPeopleMobileMoneyTwoScreen =
-      '/pay_people_mobile_money_two_screen';
-  static String payPeopleMobileMoneySendScreen =
-      '/pay_people_mobile_money_send_screen';
+  static String payPeopleMobileMoneyTwoScreen = '/pay_people_mobile_money_two_screen';
+  static String payPeopleMobileMoneySendScreen = '/pay_people_mobile_money_send_screen';
   static String addMoneyBankScreen = '/add_money_bank_screen';
   static String payPeopleInternetScreen = '/pay_People_internet_screen';
   static String addMoneyMobileMoneyScreen = '/add_money_mobile_money_screen';
@@ -93,9 +86,6 @@ class AppRoutes {
     GetPage(
       name: openAnAccountScreen,
       page: () => OpenAnAccountScreen(),
-      bindings: [
-        OpenAnAccountBinding(),
-      ],
     ),
     GetPage(
       name: setupCompanyScreen,
@@ -111,13 +101,10 @@ class AppRoutes {
     //     VerifyAccountBinding(),
     //   ],
     // ),
-    GetPage(
+    /* GetPage(
       name: verifyEmailScreen,
-      page: () => VerifyEmailScreen(),
-      bindings: [
-        VerifyEmailBinding(),
-      ],
-    ),
+      page: () => VerifyOTPScreen(),
+    ), */
     GetPage(
       name: passwordScreen,
       page: () => PasswordScreen(),
@@ -154,8 +141,6 @@ class AppRoutes {
         HomeBinding(),
       ],
     ),
-
-
 
     GetPage(
       name: addMoneyBankScreen,

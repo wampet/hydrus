@@ -14,6 +14,10 @@ class AboutYouScreen extends StatefulWidget {
 class AboutYouScreenState extends State<AboutYouScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController otherNameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -32,31 +36,29 @@ class AboutYouScreenState extends State<AboutYouScreen> {
           backgroundColor: Colors.white),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.symmetric(
-              horizontal: getHorizontalSize(20),
-              vertical: getVerticalSize(100)),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(25))),
-          padding: EdgeInsets.symmetric(
-              horizontal: getHorizontalSize(20), vertical: getVerticalSize(20)),
+          margin: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(100)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(25))),
+          padding: EdgeInsets.symmetric(horizontal: getHorizontalSize(20), vertical: getVerticalSize(20)),
           child: Align(
             alignment: Alignment.center,
             child: Column(
               children: [
                 Center(
-                    child: Text(
-                  'About you',
-                  style: AppStyle.textstyleregular25,
-                )),
+                  child: Text(
+                    'About you',
+                    style: AppStyle.textstyleregular25,
+                  ),
+                ),
                 SizedBox(
                   height: getVerticalSize(20),
                 ),
                 Center(
-                    child: Text(
-                  'Share with us more about you',
-                  textAlign: TextAlign.center,
-                  style: AppStyle.textstyleregorange16,
-                )),
+                  child: Text(
+                    'Share with us more about you',
+                    textAlign: TextAlign.center,
+                    style: AppStyle.textstyleregorange16,
+                  ),
+                ),
                 SizedBox(
                   height: getVerticalSize(40),
                 ),
@@ -66,6 +68,7 @@ class AboutYouScreenState extends State<AboutYouScreen> {
                     children: [
                       CustomFormField(
                         title: 'Your first name',
+                        controller: firstNameController,
                         validateFunction: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please fill out this field';
@@ -75,6 +78,7 @@ class AboutYouScreenState extends State<AboutYouScreen> {
                       ),
                       CustomFormField(
                         title: 'Your other names',
+                        controller: otherNameController,
                         validateFunction: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please fill out this field';
@@ -84,6 +88,7 @@ class AboutYouScreenState extends State<AboutYouScreen> {
                       ),
                       CustomInternationalFormField(
                         title: 'Phone number',
+                        controller: phoneController,
                         validateFunction: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please fill out this field';
@@ -100,6 +105,9 @@ class AboutYouScreenState extends State<AboutYouScreen> {
                           function: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
+                              db.put("first_name", firstNameController.text.trim());
+                              db.put("other_name", otherNameController.text.trim());
+                              db.put("phone", phoneController.text.trim());
                               Get.toNamed(AppRoutes.passwordScreen);
                             }
                           }),

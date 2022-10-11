@@ -62,6 +62,11 @@ dependencies:
 dev_dependencies: 
   flutter_test: 
     sdk: flutter
+    
+jsonToDart: 
+  nullSafety: true
+  nullValueDataType: String #default: dynamic
+
 flutter: 
   uses-material-design: true
   assets: 
